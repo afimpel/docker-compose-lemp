@@ -1,0 +1,86 @@
+version: "3.9"
+
+services:
+  nginxWeb:
+    build:
+      args:
+        user: afimpel
+        uid: 1000
+      context: ./nginx/
+      dockerfile: Dockerfile
+    image: nginx:alpine8000
+    container_name: nginxWeb
+    ports:
+      - "80:8000"
+    volumes:
+      - ~/wwwPHP:/var/www/html
+      - ./nginx/conf/:/etc/nginx/conf.d/:rw
+      - ~/logger/nginx:/var/log/nginx/
+    links:
+      - mariadb
+      - redis
+      - php-fpm8
+    restart: always
+
+  php-fpm8:
+    build:
+      args:
+        user: afimpel
+        uid: 1000
+        phpVersion: "8-fpm"
+      context: ./php/
+      dockerfile: Dockerfile
+    image: php:8-custom
+    container_name: phpFPM8
+    ports:
+      - "9001:9000"
+    volumes:
+      - ~/wwwPHP:/var/www/html
+      - ~/logger/php:/var/log/php/
+    restart: always
+    links:
+      - mariadb
+      - redis
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+
+  mariadb:
+    container_name: mariadb
+    image: mariadb
+    restart: always
+    environment:
+      MYSQL_USER: afimpel
+      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: my_database
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_HOST: '%'
+      TZ: America/Argentina/Buenos_Aires
+    volumes:
+      - ~/dockerfile/DB/mysql:/var/lib/mysql
+    ports:
+      - 3306:3306
+
+  redis:
+    restart: always
+    image: "redis:alpine"
+    container_name: redis
+    ports:
+      - 6379
+
+  adminer:
+    build: adminer/.
+    container_name: adminer
+    ports:
+      - 8080
+    links:
+      - mariadb
+    environment:
+      ADMINER_DEFAULT_SYSTEM: "mysql"
+      ADMINER_DEFAULT_SERVER: "mariadb"
+      ADMINER_DEFAULT_USERNAME: "root"
+      ADMINER_DEFAULT_PASSWORD: "root"
+    restart: always
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
