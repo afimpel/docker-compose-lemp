@@ -3,9 +3,6 @@ version: "3.9"
 services:
   nginxWeb:
     build:
-      args:
-        user: afimpel
-        uid: 1000
       context: ./nginx/
       dockerfile: Dockerfile
     image: nginx:alpine8000
@@ -13,9 +10,9 @@ services:
     ports:
       - "80:8000"
     volumes:
-      - ~/wwwPHP:/var/www/html
+      - ./www:/var/www/html
       - ./nginx/conf/:/etc/nginx/conf.d/:rw
-      - ~/logger/nginx:/var/log/nginx/
+      - ./logs/nginx:/var/log/nginx
     links:
       - mariadb
       - redis
@@ -25,9 +22,9 @@ services:
   php-fpm8:
     build:
       args:
-        user: afimpel
-        uid: 1000
-        phpVersion: "8-fpm"
+        user: ${USERNAME}
+        uid: ${USER_UID}
+        phpVersion: ${phpVersion}
       context: ./php/
       dockerfile: Dockerfile
     image: php:8-custom
@@ -35,8 +32,13 @@ services:
     ports:
       - "9001:9000"
     volumes:
-      - ~/wwwPHP:/var/www/html
-      - ~/logger/php:/var/log/php/
+      - ./www:/var/www/html
+      - ./logs/php8/xdebug:/var/log/xdebug
+      - ./logs/php8/gral:/var/log/php/
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      XDEBUG_CONFIG: "client_host=localhost remote_port=${XDEBUG_PORT}"
+      TZ: America/Argentina/Buenos_Aires
     restart: always
     links:
       - mariadb
@@ -50,14 +52,15 @@ services:
     image: mariadb
     restart: always
     environment:
-      MYSQL_USER: afimpel
-      MYSQL_PASSWORD: password
-      MYSQL_DATABASE: my_database
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_ROOT_HOST: '%'
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       TZ: America/Argentina/Buenos_Aires
     volumes:
-      - ~/dockerfile/DB/mysql:/var/lib/mysql
+      - ./mariadb/database:/var/lib/mysql
+      - ./mariadb/initdb:/docker-entrypoint-initdb.d
+      - ./logs/mysql:/var/log/mysql
     ports:
       - 3306:3306
 
@@ -71,6 +74,7 @@ services:
   adminer:
     build: adminer/.
     container_name: adminer
+    image: adminer:username
     ports:
       - 8080
     links:
@@ -79,7 +83,8 @@ services:
       ADMINER_DEFAULT_SYSTEM: "mysql"
       ADMINER_DEFAULT_SERVER: "mariadb"
       ADMINER_DEFAULT_USERNAME: "root"
-      ADMINER_DEFAULT_PASSWORD: "root"
+      ADMINER_DEFAULT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      TZ: America/Argentina/Buenos_Aires
     restart: always
     dns:
       - 8.8.8.8

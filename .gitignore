@@ -1,0 +1,7 @@
+/logs/nginx/*
+/logs/php8/*
+/logs/xdebug/*
+/logs/mysql/*
+.env
+/nginx/conf/0*
+/mariadb/database/*
