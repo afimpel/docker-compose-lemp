@@ -26,7 +26,7 @@ cp sample.env .env
 docker-compose up -d
 // visit localhost
 ```
-Your LAMP stack is now ready!! You can access it via `http://localhost`.
+Your LEMP stack is now ready!! You can access it via `http://localhost`.
 
 access to php composer:
  - Open terminal (ej: xterm, gnome-terminal)
