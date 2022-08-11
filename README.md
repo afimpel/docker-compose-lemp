@@ -3,7 +3,7 @@
 ## docker / Nginx / MariaDB / Redis / PHP / Composer / Adminer
 ----
 
-A basic LAMP stack environment built using Docker Compose. It consists of the following:
+A basic LEMP stack environment built using Docker Compose. It consists of the following:
 
 - PHP
 - Nginx
@@ -26,11 +26,11 @@ cp sample.env .env
 docker-compose up -d
 // visit localhost
 ```
-Your LAMP stack is now ready!! You can access it via `http://localhost`.
+Your LEMP stack is now ready!! You can access it via `http://localhost`.
 
 access to php composer:
  - Open terminal (ej: xterm, gnome-terminal)
- - paste, this command: `docker exec -it phpFPM8 bash`
+ - paste, this command: `docker exec -u $(id -u ${USER}):$(id -g ${USER}) -it phpFPM8 bash`
  - exit: `exit` o **ctrl+d**
 
 

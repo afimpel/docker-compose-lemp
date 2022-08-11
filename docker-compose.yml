@@ -10,7 +10,6 @@ services:
     ports:
       - "80:8000"
     volumes:
-      - /home/afimpel/coder/cursos/breeze/:/var/www/breeze
       - ./www:/var/www/html
       - ./nginx/conf/:/etc/nginx/conf.d/:rw
       - ./logs/nginx:/var/log/nginx
@@ -34,7 +33,6 @@ services:
       - "9001:9000"
     volumes:
       - ./www:/var/www/html
-      - /home/afimpel/coder/cursos/breeze/:/var/www/breeze
       - ./logs/php8/xdebug:/var/log/xdebug
       - ./logs/php8/gral:/var/log/php/
     environment:

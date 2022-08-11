@@ -124,7 +124,7 @@
             <h3>access to php composer:</h3>
             <ol>
                 <li>Open terminal (ej: xterm, gnome-terminal)</li>
-                <li>paste, this command: <code>docker exec -it phpFPM8 bash</code></li>
+                <li>paste, this command: <code>docker exec -u $(id -u ${USER}):$(id -g ${USER}) -it phpFPM8 bash</code></li>
                 <li>exit: <code>exit</code> o <code>ctrl+d</code> </li>
             </ol>
 
