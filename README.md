@@ -3,7 +3,7 @@
 ## docker / Nginx / MariaDB / Redis / PHP / Composer / Adminer
 ----
 
-A basic LAMP stack environment built using Docker Compose. It consists of the following:
+A basic LEMP stack environment built using Docker Compose. It consists of the following:
 
 - PHP
 - Nginx
