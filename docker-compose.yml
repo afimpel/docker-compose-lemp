@@ -16,10 +16,10 @@ services:
     links:
       - mariadb
       - redis
-      - php-fpm8
+      - php-fpm
     restart: always
 
-  php-fpm8:
+  php-fpm:
     build:
       args:
         user: ${USERNAME}
@@ -27,14 +27,14 @@ services:
         phpVersion: ${phpVersion}
       context: ./php/
       dockerfile: Dockerfile
-    image: php:8-custom
-    container_name: phpFPM8
+    image: php:${phpVersion}-custom
+    container_name: phpFPM_${phpVersion}
     ports:
       - "9001:9000"
     volumes:
       - ./www:/var/www/html
-      - ./logs/php8/xdebug:/var/log/xdebug
-      - ./logs/php8/gral:/var/log/php/
+      - ./logs/php_${phpVersion}/xdebug:/var/log/xdebug
+      - ./logs/php_${phpVersion}/gral:/var/log/php/
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       XDEBUG_CONFIG: "client_host=localhost remote_port=${XDEBUG_PORT}"
