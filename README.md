@@ -30,7 +30,7 @@ Your LEMP stack is now ready!! You can access it via `http://localhost`.
 
 access to php composer:
  - Open terminal (ej: xterm, gnome-terminal)
- - paste, this command: `docker exec -u $(id -u ${USER}):$(id -g ${USER}) -it phpFPM8 bash`
+ - paste, this command: `docker exec -u $(id -u ${USER}):$(id -g ${USER}) -it phpFPM bash`
  - exit: `exit` o **ctrl+d**
 
 

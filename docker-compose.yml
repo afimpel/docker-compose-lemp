@@ -28,7 +28,7 @@ services:
       context: ./php/
       dockerfile: Dockerfile
     image: php:${phpVersion}-custom
-    container_name: phpFPM_${phpVersion}
+    container_name: phpFPM
     ports:
       - "9001:9000"
     volumes:
