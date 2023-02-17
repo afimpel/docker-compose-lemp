@@ -2,17 +2,16 @@ version: "3.9"
 
 services:
   nginxWeb:
-    build:
-      context: ./nginx/
-      dockerfile: Dockerfile
-    image: nginx:alpine8000
+    image: nginx:alpine
     container_name: nginxWeb
     ports:
-      - "80:8000"
+      - 80:80
     volumes:
-      - ./www:/var/www/html
-      - ./nginx/conf/:/etc/nginx/conf.d/:rw
-      - ./logs/nginx:/var/log/nginx
+      - ./:/var/www/html
+      - ./docker/nginx/conf/:/etc/nginx/conf.d/:rw
+      - ./docker/LOGS/nginx:/var/log/nginx
+    environment:
+      TZ: America/Argentina/Buenos_Aires
     links:
       - mariadb
       - redis
@@ -25,20 +24,20 @@ services:
         user: ${USERNAME}
         uid: ${USER_UID}
         phpVersion: ${phpVersion}
-      context: ./php/
+      context: ./docker/php/
       dockerfile: Dockerfile
     image: php:${phpVersion}-custom
     container_name: phpFPM
     ports:
       - "9001:9000"
     volumes:
-      - ./www:/var/www/html
-      - ./logs/php_${phpVersion}/xdebug:/var/log/xdebug
-      - ./logs/php_${phpVersion}/gral:/var/log/php/
+      - ./:/var/www/html
+      - ./docker/LOGS/php_${phpVersion}/xdebug:/var/log/xdebug
+      - ./docker/LOGS/php_${phpVersion}/gral:/var/log/php/
     environment:
+      TZ: America/Argentina/Buenos_Aires
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       XDEBUG_CONFIG: "client_host=localhost remote_port=${XDEBUG_PORT}"
-      TZ: America/Argentina/Buenos_Aires
     restart: always
     links:
       - mariadb
@@ -58,9 +57,9 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       TZ: America/Argentina/Buenos_Aires
     volumes:
-      - ./mariadb/database:/var/lib/mysql
-      - ./mariadb/initdb:/docker-entrypoint-initdb.d
-      - ./logs/mysql:/var/log/mysql
+      - ./docker/mariadb/database:/var/lib/mysql
+      - ./docker/mariadb/initdb:/docker-entrypoint-initdb.d
+      - ./docker/LOGS/mariadb:/var/log/mysql
     ports:
       - 3306:3306
 
@@ -72,7 +71,7 @@ services:
       - 6379
 
   adminer:
-    build: adminer/.
+    build: ./docker/adminer/.
     container_name: adminer
     image: adminer:username
     ports:
